@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Продажи</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createNewSale()">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Продажи</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshSales($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="container">
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="filterSales()"
+      placeholder="Поиск по клиентам">
+    </ion-searchbar>
+
+    <ion-list>
+      <ion-item-sliding *ngFor="let sale of filteredSales">
+        <ion-item>
+          <ion-label>
+            <h2>{{ sale.customer_name }}</h2>
+            <p>Продажа #{{sale.id}}</p>
+            <p>Товаров: {{ sale.items.length }} шт.</p>
+            <p>Сумма: {{ sale.total | number:'1.2-2' }} сом.</p>
+            <p *ngIf="sale.created_at">Дата: {{ sale.created_at | date:'dd.MM.yyyy HH:mm' }}</p>
+            <p *ngIf="sale.comment">Коментарий: {{ sale.comment }}</p>
+            <p><span [style.color]="sale.paid ? 'green' : 'red'">{{ sale.paid ? 'Оплачено' : 'Не оплачено' }}</span>
+            </p>
+          </ion-label>
+          <ion-badge slot="end" color="success">
+            {{ sale.total | number:'1.2-2' }} сом.
+          </ion-badge>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option (click)="viewSaleDetails(sale)" color="primary">
+            <ion-icon name="eye" slot="icon-only"></ion-icon>
+          </ion-item-option>
+          <ion-item-option (click)="editComment(sale)" color="warning">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+          <ion-item-option (click)="returnItems(sale)" color="medium">
+            <ion-icon name="arrow-undo-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+          @if (!sale.paid && isAdmin) {
+            <ion-item-option (click)="checkPaidSale(sale)" color="success">
+              <ion-icon name="cash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          }
+          <!--          <ion-item-option (click)="deleteSale(sale)" color="danger">-->
+          <!--            <ion-icon name="trash" slot="icon-only"></ion-icon>-->
+          <!--          </ion-item-option>-->
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  </div>
+</ion-content>

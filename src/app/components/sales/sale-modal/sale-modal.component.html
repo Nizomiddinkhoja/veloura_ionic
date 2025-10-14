@@ -1,0 +1,133 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Новая продажа</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <ion-item>
+      <ion-label position="stacked">Имя клиента *</ion-label>
+      <ion-input
+        [(ngModel)]="customerName"
+        placeholder="Введите имя клиента"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Комментарий</ion-label>
+      <ion-textarea
+        [(ngModel)]="comment"
+        placeholder="Дополнительная информация">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Оплата</ion-label>
+      <ion-select [(ngModel)]="paid" placeholder="Выберите статус">
+        <ion-select-option [value]="true">Оплачено</ion-select-option>
+        <ion-select-option [value]="false">Не оплачено</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Выберите товары</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-select
+            [(ngModel)]="selectedProductId"
+            placeholder="Выберите товар"
+            (ionChange)="onProductSelected()">
+            <ion-select-option
+              *ngFor="let product of availableProducts"
+              [value]="product.id">
+              {{ product.name }} ({{ product.quantity }} шт.)
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="selectedProduct">
+          <ion-label position="stacked">Количество</ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="quantity"
+            [max]="selectedProduct.quantity"
+            min="1"
+            placeholder="Количество">
+          </ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="selectedProduct">
+          <ion-label position="stacked">Цена продажи</ion-label>
+          <ion-input
+            type="number"
+            [(ngModel)]="sellPrice"
+            [min]="selectedProduct.buy_price"
+            step="0.01"
+            placeholder="Цена продажи">
+          </ion-input>
+          <ion-note slot="helper">
+            Минимальная цена: {{ selectedProduct.buy_price | number:'1.2-2' }} сом.
+          </ion-note>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          (click)="addToCart()"
+          [disabled]="!canAddToCart()">
+          Добавить в корзину
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="cartItems.length > 0">
+      <ion-card-header>
+        <ion-card-title>Корзина ({{ getTotalItems() }} шт.)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item-sliding *ngFor="let item of cartItems; let i = index">
+            <ion-item>
+              <ion-label>
+                <h3>{{ item.name }}</h3>
+                <p>Количество: {{ item.quantity }}</p>
+                <p>Цена: {{ item.sell_price | number:'1.2-2' }} сом.</p>
+                <p>Сумма: {{ (item.quantity * item.sell_price) | number:'1.2-2' }} сом.</p>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="end">
+              <ion-item-option (click)="removeFromCart(i)" color="danger">
+                <ion-icon name="trash" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+
+        <ion-item>
+          <ion-label>
+            <h2>Итого: {{ getTotalAmount() | number:'1.2-2' }} сом.</h2>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      (click)="createSale()"
+      [disabled]="!canCreateSale()">
+      Оформить продажу
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

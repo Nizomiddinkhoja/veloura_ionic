@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Возврат товаров</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <ion-list>
+      <ion-item *ngFor="let line of lines">
+
+        <div class="line-item">
+          <ion-checkbox slot="start" [(ngModel)]="line.selected"></ion-checkbox>
+          <ion-label>
+            <h3>{{ line.name || ('Товар #' + line.product_id) }}</h3>
+            <p>Доступно к возврату: {{ line.max }} шт.</p>
+          </ion-label>
+          <ion-input style="width: 70px; border: 0.5px solid; padding: 10px; --padding-start: 5px; --padding-end: 5px;"
+            type="number" [disabled]="!line.selected" [(ngModel)]="line.qty" (ionInput)="clamp(line)" min="0"
+            [max]="line.max" placeholder="Кол-во">
+          </ion-input>
+
+        </div>
+        <div>
+          <ion-label position="stacked">Комментарий (необязательно)</ion-label>
+          <ion-textarea [(ngModel)]="line.comment" placeholder="Причина возврата"></ion-textarea>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" [disabled]="!canSubmit" (click)="submit()">Оформить возврат</ion-button>
+  </div>
+</ion-content>

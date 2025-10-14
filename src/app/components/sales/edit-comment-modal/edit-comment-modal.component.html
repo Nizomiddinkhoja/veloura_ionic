@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Комментарий к заказу</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <ion-item>
+      <ion-label position="stacked">Комментарий</ion-label>
+      <ion-textarea [(ngModel)]="comment" placeholder="Введите комментарий"></ion-textarea>
+    </ion-item>
+
+    <ion-button expand="block" (click)="save()">Сохранить</ion-button>
+  </div>
+</ion-content>

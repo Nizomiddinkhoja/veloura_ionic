@@ -1,0 +1,28 @@
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Авторизация</ion-card-title>
+    </ion-card-header>
+
+
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input [(ngModel)]="email" type="email" placeholder="Введите email"></ion-input>
+      </ion-item>
+
+
+      <ion-item>
+        <ion-label position="stacked">Пароль</ion-label>
+        <ion-input [(ngModel)]="password" type="password" placeholder="Введите пароль"></ion-input>
+      </ion-item>
+
+
+      <ion-button expand="full" (click)="login()" [disabled]="loading">
+        <ion-spinner *ngIf="loading" slot="start"></ion-spinner>
+        Войти
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

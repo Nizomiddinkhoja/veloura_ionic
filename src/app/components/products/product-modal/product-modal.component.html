@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">{{ isUpdate ? 'Изменить продукт' : 'Добавить продукт' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list lines="none">
+    <ion-item>
+      <ion-label position="stacked">Название продукта</ion-label>
+      <ion-input
+        [(ngModel)]="currentProduct.name"
+        placeholder="Введите название"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Цена покупки</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="currentProduct.buy_price"
+        placeholder="0.00"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Цена продажи</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="currentProduct.sell_price"
+        placeholder="0.00"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Количество</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="currentProduct.quantity"
+        placeholder="0"
+        required>
+      </ion-input>
+    </ion-item>
+
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      (click)="save()"
+      [disabled]="!canSave()">
+      Оформить продажу
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

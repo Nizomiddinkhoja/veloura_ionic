@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Veloura butique tj</string>
+    <string name="title_activity_main">Veloura butique tj</string>
+    <string name="package_name">tj.veloura.app</string>
+    <string name="custom_url_scheme">tj.veloura.app</string>
+</resources>

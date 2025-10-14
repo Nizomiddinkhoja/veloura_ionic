@@ -1,0 +1,38 @@
+.container {
+  padding: 20px;
+}
+
+ion-card {
+  margin: 10px 0;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+ion-card-content {
+  text-align: center;
+  padding: 20px;
+  
+  ion-icon {
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    margin: 10px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+ion-badge {
+  margin-top: 10px;
+}
