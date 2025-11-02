@@ -10,7 +10,9 @@ export class SaleService {
 
 
   create(sale: Sale): Observable<Sale> { return this.api.post<Sale>('/sales', sale); }
-  list(): Observable<Sale[]> { return this.api.get<Sale[]>('/sales'); }
+  list(params?: any): Observable<Sale[]> { 
+    return this.api.get<Sale[]>('/sales', params); 
+  }
   remove(id: number): Observable<any> { return this.api.delete(`/sales/${id}`); }
   paid(id: number): Observable<any> { return this.api.post(`/sales/paid/${id}`, null); }
 

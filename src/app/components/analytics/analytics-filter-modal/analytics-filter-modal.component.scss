@@ -1,0 +1,25 @@
+ion-list {
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 0;
+}
+
+.quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 16px 16px;
+
+  ion-button {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+ion-footer {
+  ion-toolbar {
+    --background: var(--ion-color-light);
+  }
+}

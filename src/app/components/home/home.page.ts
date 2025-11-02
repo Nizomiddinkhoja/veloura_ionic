@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons'
-import { cardOutline, cubeOutline, analyticsOutline, clipboardOutline } from 'ionicons/icons'
+import { cardOutline, cubeOutline, analyticsOutline, clipboardOutline, cartOutline } from 'ionicons/icons'
 import { AuthService } from "../../services/auth.service";
 import { UserRole } from "../../models/user-role";
 
@@ -17,7 +17,7 @@ export class HomePage {
     private router: Router,
     private authService: AuthService,
   ) {
-    addIcons({cardOutline, cubeOutline, analyticsOutline, clipboardOutline});
+    addIcons({cardOutline, cubeOutline, analyticsOutline, clipboardOutline, cartOutline});
   }
 
   public get isAdmin() {
@@ -38,6 +38,10 @@ export class HomePage {
 
   navigateToNotes() {
     this.router.navigate(['/notes']);
+  }
+
+  navigateToPurchases() {
+    this.router.navigate(['/purchases']);
   }
 
 }

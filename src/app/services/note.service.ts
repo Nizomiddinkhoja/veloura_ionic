@@ -8,7 +8,9 @@ import { Note } from "../models/note.model";
 export class NoteService {
   constructor(private api: ApiService) {}
 
-  list(): Observable<Note[]> { return this.api.get<Note[]>('/notes'); }
+  list(params?: any): Observable<Note[]> { 
+    return this.api.get<Note[]>('/notes', params); 
+  }
   get(id: number) { return this.api.get<Note>(`/notes/${id}`); }
   create(payload: Note) { return this.api.post<Note>('/notes', payload); }
   update(id: number, payload: Partial<Note>) { return this.api.put(`/notes/${id}`, payload); }

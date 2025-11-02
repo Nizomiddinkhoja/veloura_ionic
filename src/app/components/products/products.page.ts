@@ -4,8 +4,9 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { ToastService } from "../../services/toast.service";
 import { addIcons } from "ionicons";
-import { add, create, trash } from "ionicons/icons";
+import { add, create, trash, filterOutline } from "ionicons/icons";
 import { ProductModalComponent } from './product-modal/product-modal.component';
+import { ProductsFilterModalComponent, ProductsFilters } from './products-filter-modal/products-filter-modal.component';
 
 @Component({
   selector: 'app-products',
@@ -17,6 +18,7 @@ export class ProductsPage implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   searchTerm: string = '';
+  currentFilters: ProductsFilters = {};
 
   constructor(
     private productService: ProductService,
@@ -25,7 +27,7 @@ export class ProductsPage implements OnInit {
     private toastService: ToastService,
     private modalController: ModalController,
   ) {
-    addIcons({add, trash, create})
+    addIcons({add, trash, create, filterOutline})
   }
 
   ngOnInit() {
@@ -39,7 +41,7 @@ export class ProductsPage implements OnInit {
     await loading.present();
 
     try {
-      this.products = await this.productService.list().toPromise() || [];
+      this.products = await this.productService.list(this.currentFilters).toPromise() || [];
       this.filteredProducts = [...this.products];
     } catch (error) {
       console.error('Ошибка загрузки продуктов:', error);
@@ -177,6 +179,24 @@ export class ProductsPage implements OnInit {
       this.toastService.error('Ошибка удаления продукта');
     } finally {
       await loading.dismiss();
+    }
+  }
+
+  // Открыть модалку фильтров
+  async openFilters() {
+    const modal = await this.modalController.create({
+      component: ProductsFilterModalComponent,
+      componentProps: {
+        currentFilters: this.currentFilters
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss<ProductsFilters>();
+    if (data) {
+      this.currentFilters = data;
+      await this.loadProducts();
     }
   }
 }

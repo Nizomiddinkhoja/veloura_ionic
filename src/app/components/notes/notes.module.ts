@@ -8,6 +8,7 @@ import { NotesPageRoutingModule } from './notes-routing.module';
 
 import { NotesPage } from './notes.page';
 import { NoteService } from "../../services/note.service";
+import { NotesFilterModalComponent } from './notes-filter-modal/notes-filter-modal.component';
 
 @NgModule({
   imports: [
@@ -17,7 +18,7 @@ import { NoteService } from "../../services/note.service";
     NotesPageRoutingModule
   ],
   providers: [NoteService],
-  declarations: [NotesPage]
+  declarations: [NotesPage, NotesFilterModalComponent]
 })
 export class NotesPageModule {
 }

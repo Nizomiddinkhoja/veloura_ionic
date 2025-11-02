@@ -1,0 +1,48 @@
+ion-card {
+  margin-bottom: 16px;
+}
+
+ion-item {
+  margin-bottom: 8px;
+}
+
+ion-label {
+  p {
+    margin-top: 8px;
+    
+    strong {
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+.autocomplete-wrapper {
+  position: relative;
+
+  .suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--ion-background-color);
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    ion-item {
+      --padding-start: 12px;
+      cursor: pointer;
+
+      &:hover {
+        --background: var(--ion-color-light);
+      }
+    }
+  }
+}
+
+.return-label {
+  margin-top: 4px;
+}

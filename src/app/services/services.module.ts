@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from './api.service';
 import { ProductService } from './product.service';
 import { SaleService } from './sale.service';
+import { PurchaseService } from './purchase.service';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import { SaleService } from './sale.service';
   providers: [
     ApiService,
     ProductService,
-    SaleService
+    SaleService,
+    PurchaseService
   ]
 })
 export class ServicesModule { }

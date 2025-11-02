@@ -1,0 +1,13 @@
+ion-list {
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 0;
+}
+
+ion-footer {
+  ion-toolbar {
+    --background: var(--ion-color-light);
+  }
+}

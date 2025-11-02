@@ -1,0 +1,157 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Фильтры товаров</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-input
+        label="Поиск по названию"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.search"
+        placeholder="Введите название товара">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Мин. цена покупки"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.min_buy_price"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Макс. цена покупки"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.max_buy_price"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Мин. цена продажи"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.min_sell_price"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Макс. цена продажи"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.max_sell_price"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Мин. количество"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.min_quantity"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Макс. количество"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.max_quantity"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-checkbox [(ngModel)]="filters.low_stock">
+        Только товары с низким остатком
+      </ion-checkbox>
+    </ion-item>
+
+    <ion-item *ngIf="filters.low_stock">
+      <ion-input
+        label="Порог низкого остатка"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.low_stock_threshold"
+        placeholder="10">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Дата от"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_from">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Дата до"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_to">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Сортировать по"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.sort_by">
+        <ion-select-option value="id">ID</ion-select-option>
+        <ion-select-option value="name">Названию</ion-select-option>
+        <ion-select-option value="buy_price">Цене покупки</ion-select-option>
+        <ion-select-option value="sell_price">Цене продажи</ion-select-option>
+        <ion-select-option value="quantity">Количеству</ion-select-option>
+        <ion-select-option value="created_at">Дате создания</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Порядок"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.sort_order">
+        <ion-select-option value="asc">По возрастанию</ion-select-option>
+        <ion-select-option value="desc">По убыванию</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="resetFilters()" color="medium">
+        Сбросить
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="applyFilters()" color="primary" fill="solid">
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        Применить
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

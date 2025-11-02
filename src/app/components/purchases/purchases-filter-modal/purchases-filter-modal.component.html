@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Фильтры закупок</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-input
+        label="Поиск (поставщик, заметки)"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.search"
+        placeholder="Введите текст для поиска">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Минимальная сумма"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.min_amount"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Максимальная сумма"
+        labelPlacement="stacked"
+        type="number"
+        [(ngModel)]="filters.max_amount"
+        placeholder="0">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Дата от"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_from">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Дата до"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_to">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-checkbox [(ngModel)]="filters.has_returns">
+        Только с возвратами
+      </ion-checkbox>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Сортировать по"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.sort_by">
+        <ion-select-option value="id">ID</ion-select-option>
+        <ion-select-option value="total_amount">Сумме</ion-select-option>
+        <ion-select-option value="created_at">Дате создания</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select
+        label="Порядок"
+        labelPlacement="stacked"
+        [(ngModel)]="filters.sort_order">
+        <ion-select-option value="desc">По убыванию</ion-select-option>
+        <ion-select-option value="asc">По возрастанию</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="resetFilters()" color="medium">
+        Сбросить
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="applyFilters()" color="primary" fill="solid">
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        Применить
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

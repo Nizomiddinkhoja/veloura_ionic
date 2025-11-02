@@ -39,6 +39,11 @@ const routes: Routes = [
     loadChildren: () => import('./components/notes/notes.module').then(m => m.NotesPageModule),
     canActivate: [authGuard],
   },
+  {
+    path: 'purchases',
+    loadChildren: () => import('./components/purchases/purchases.module').then(m => m.PurchasesPageModule),
+    canActivate: [authGuard],
+  },
 ];
 
 @NgModule({

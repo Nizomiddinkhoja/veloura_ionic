@@ -11,6 +11,7 @@ import { SaleViewModalComponent } from "./sale-view-modal/sale-view-modal.compon
 import { EditCommentModalComponent } from './edit-comment-modal/edit-comment-modal.component';
 import { ReturnItemsModalComponent } from './return-items-modal/return-items-modal.component';
 import { SaleModalComponent } from './sale-modal/sale-modal.component';
+import { SalesFilterModalComponent } from './sales-filter-modal/sales-filter-modal.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,6 @@ import { SaleModalComponent } from './sale-modal/sale-modal.component';
     IonicModule,
     SalesPageRoutingModule
   ],
-  declarations: [SalesPage, SaleModalComponent, SaleViewModalComponent, EditCommentModalComponent, ReturnItemsModalComponent]
+  declarations: [SalesPage, SaleModalComponent, SaleViewModalComponent, EditCommentModalComponent, ReturnItemsModalComponent, SalesFilterModalComponent]
 })
 export class SalesPageModule {}

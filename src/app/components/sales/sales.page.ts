@@ -7,10 +7,11 @@ import { EditCommentModalComponent } from './edit-comment-modal/edit-comment-mod
 import { ReturnItemsModalComponent } from  './return-items-modal/return-items-modal.component';
 import { ToastService } from "../../services/toast.service";
 import { addIcons } from "ionicons";
-import { add, eye, cashOutline, trash, createOutline, arrowUndoOutline } from "ionicons/icons";
+import { add, eye, cashOutline, trash, createOutline, arrowUndoOutline, filterOutline } from "ionicons/icons";
 import { UserRole } from "../../models/user-role";
 import { AuthService } from "../../services/auth.service";
 import { SaleModalComponent } from './sale-modal/sale-modal.component';
+import { SalesFilterModalComponent, SalesFilters } from './sales-filter-modal/sales-filter-modal.component';
 
 @Component({
   selector: 'app-sales',
@@ -22,6 +23,7 @@ export class SalesPage implements OnInit {
   sales: Sale[] = [];
   filteredSales: Sale[] = [];
   searchTerm: string = '';
+  currentFilters: SalesFilters = {};
 
   constructor(
     private saleService: SaleService,
@@ -31,7 +33,7 @@ export class SalesPage implements OnInit {
     private toastService: ToastService,
     private authService: AuthService,
   ) {
-    addIcons({add, eye, cashOutline, trash, createOutline, arrowUndoOutline})
+    addIcons({add, eye, cashOutline, trash, createOutline, arrowUndoOutline, filterOutline})
   }
 
   public get isAdmin() {
@@ -49,8 +51,8 @@ export class SalesPage implements OnInit {
     await loading.present();
 
     try {
-      this.sales = await this.saleService.list().toPromise() || [];
-      this.filteredSales = [...this.sales];
+      this.sales = await this.saleService.list(this.currentFilters).toPromise() || [];
+      this.filterSales();
     } catch (error) {
       console.error('Ошибка загрузки продаж:', error);
       this.toastService.error('Ошибка загрузки продаж');
@@ -252,5 +254,23 @@ export class SalesPage implements OnInit {
     }
 
     return details;
+  }
+
+  // Открыть модалку фильтров
+  async openFilters() {
+    const modal = await this.modalController.create({
+      component: SalesFilterModalComponent,
+      componentProps: {
+        currentFilters: this.currentFilters
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss<SalesFilters>();
+    if (data) {
+      this.currentFilters = data;
+      await this.loadSales();
+    }
   }
 }

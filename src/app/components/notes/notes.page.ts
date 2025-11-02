@@ -4,7 +4,9 @@ import { Note } from "../../models/note.model";
 import { NoteService } from "../../services/note.service";
 import { ToastService } from "../../services/toast.service";
 import { addIcons } from 'ionicons'
-import { add, trash, create } from 'ionicons/icons'
+import { add, trash, create, filterOutline } from 'ionicons/icons'
+import { ModalController } from '@ionic/angular';
+import { NotesFilterModalComponent, NotesFilters } from './notes-filter-modal/notes-filter-modal.component';
 import { UserRole } from "../../models/user-role";
 import { AuthService } from "../../services/auth.service";
 
@@ -18,6 +20,7 @@ export class NotesPage implements OnInit {
   notes: Note[] = [];
   filteredNotes: Note[] = [];
   searchTerm: string = '';
+  currentFilters: NotesFilters = {};
 
   constructor(
     private noteService: NoteService,
@@ -25,8 +28,9 @@ export class NotesPage implements OnInit {
     private loadingController: LoadingController,
     private toastService: ToastService,
     private authService: AuthService,
+    private modalController: ModalController
   ) {
-    addIcons({add, trash, create})
+    addIcons({add, trash, create, filterOutline})
   }
 
   ngOnInit() {
@@ -39,15 +43,15 @@ export class NotesPage implements OnInit {
 
   async loadNotes() {
     const loading = await this.loadingController.create({
-      message: 'Загрузка заметкаов...'
+      message: 'Загрузка заметок...'
     });
     await loading.present();
 
     try {
-      this.notes = await this.noteService.list().toPromise() || [];
+      this.notes = await this.noteService.list(this.currentFilters).toPromise() || [];
       this.filteredNotes = [...this.notes];
     } catch (error) {
-      console.error('Ошибка загрузки заметкаов:', error);
+      console.error('Ошибка загрузки заметок:', error);
       this.toastService.error('Ошибка загрузки заметкаов');
     } finally {
       await loading.dismiss();
@@ -167,6 +171,24 @@ export class NotesPage implements OnInit {
       this.toastService.error('Ошибка удаления заметки');
     } finally {
       await loading.dismiss();
+    }
+  }
+
+  // Открыть модалку фильтров
+  async openFilters() {
+    const modal = await this.modalController.create({
+      component: NotesFilterModalComponent,
+      componentProps: {
+        currentFilters: this.currentFilters
+      }
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss<NotesFilters>();
+    if (data) {
+      this.currentFilters = data;
+      await this.loadNotes();
     }
   }
 }

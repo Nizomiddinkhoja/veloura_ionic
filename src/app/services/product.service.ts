@@ -9,7 +9,9 @@ export class ProductService {
   constructor(private api: ApiService) {}
 
 
-  list(): Observable<Product[]> { return this.api.get<Product[]>('/products'); }
+  list(params?: any): Observable<Product[]> { 
+    return this.api.get<Product[]>('/products', params); 
+  }
   get(id: number) { return this.api.get<Product>(`/products/${id}`); }
   create(payload: Product) { return this.api.post<Product>('/products', payload); }
   update(id: number, payload: Partial<Product>) { return this.api.put(`/products/${id}`, payload); }

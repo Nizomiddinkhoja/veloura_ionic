@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Фильтры аналитики</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <!-- Быстрые фильтры -->
+    <ion-item lines="none">
+      <ion-label>
+        <h3>Быстрые периоды</h3>
+      </ion-label>
+    </ion-item>
+
+    <div class="quick-filters">
+      <ion-button (click)="setToday()" size="small" fill="outline">
+        Сегодня
+      </ion-button>
+      <ion-button (click)="setThisWeek()" size="small" fill="outline">
+        Эта неделя
+      </ion-button>
+      <ion-button (click)="setThisMonth()" size="small" fill="outline">
+        Этот месяц
+      </ion-button>
+      <ion-button (click)="setLastMonth()" size="small" fill="outline">
+        Прошлый месяц
+      </ion-button>
+    </div>
+
+    <!-- Ручной выбор дат -->
+    <ion-item>
+      <ion-input
+        label="Дата от"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_from">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Дата до"
+        labelPlacement="stacked"
+        type="date"
+        [(ngModel)]="filters.date_to">
+      </ion-input>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="resetFilters()" color="medium">
+        Сбросить
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="applyFilters()" color="primary" fill="solid">
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        Применить
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

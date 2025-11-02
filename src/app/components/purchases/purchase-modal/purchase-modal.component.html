@@ -1,0 +1,168 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">Отмена</ion-button>
+    </ion-buttons>
+    <ion-title>{{ purchase ? 'Редактировать' : 'Новая' }} закупка</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" [strong]="true">Сохранить</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Информация о дилере -->
+<!--  <ion-card>-->
+<!--    <ion-card-header>-->
+<!--      <ion-card-title>Дилер</ion-card-title>-->
+<!--    </ion-card-header>-->
+<!--    <ion-card-content>-->
+<!--      <div class="autocomplete-wrapper">-->
+<!--        <ion-item>-->
+<!--          <ion-input-->
+<!--            label="Имя дилера"-->
+<!--            labelPlacement="stacked"-->
+<!--            [(ngModel)]="dealerSearchTerm"-->
+<!--            (ionInput)="onDealerInput($event)"-->
+<!--            placeholder="Начните вводить имя дилера"-->
+<!--            required>-->
+<!--          </ion-input>-->
+<!--        </ion-item>-->
+<!--        <ion-list *ngIf="showDealerSuggestions" class="suggestions-list">-->
+<!--          <ion-item button *ngFor="let dealer of dealerSuggestions" (click)="selectDealer(dealer)">-->
+<!--            <ion-label>{{ dealer.name }}</ion-label>-->
+<!--          </ion-item>-->
+<!--        </ion-list>-->
+<!--      </div>-->
+
+<!--    </ion-card-content>-->
+<!--  </ion-card>-->
+
+  <!-- Добавление товаров -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Добавить товар</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="autocomplete-wrapper">
+        <ion-item>
+          <ion-input
+            label="Название товара"
+            labelPlacement="stacked"
+            [(ngModel)]="productSearchTerm"
+            (ionInput)="onProductInput($event)"
+            placeholder="Начните вводить название товара"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-list *ngIf="showProductSuggestions" class="suggestions-list">
+          <ion-item button *ngFor="let product of productSuggestions" (click)="selectProduct(product)">
+            <ion-label>
+              <h3>{{ product.name }}</h3>
+              <p>Цена покупки: {{ product.buy_price | number:'1.2-2' }} сом.</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <ion-item>
+        <ion-input
+          label="Количество"
+          labelPlacement="stacked"
+          type="number"
+          [(ngModel)]="currentItem.quantity"
+          (ionChange)="calculateItemTotal()"
+          placeholder="0">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Цена покупки (сом.)"
+          labelPlacement="stacked"
+          type="number"
+          [(ngModel)]="currentItem.buy_price"
+          (ionChange)="calculateItemTotal()"
+          placeholder="0.00">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Цена продажи (сом.)"
+          labelPlacement="stacked"
+          type="number"
+          [(ngModel)]="currentItem.sell_price"
+          placeholder="0.00">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-checkbox [(ngModel)]="currentItem.is_return">Это возврат товара</ion-checkbox>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <p>Стоимость: <strong>{{ currentItem.total_cost | number:'1.2-2' }} сом.</strong></p>
+        </ion-label>
+      </ion-item>
+
+      <ion-button expand="block" (click)="addItem()" [disabled]="!currentItem.product_name || !currentItem.quantity">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Добавить товар
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Список добавленных товаров -->
+  <ion-card *ngIf="formData.items.length > 0">
+    <ion-card-header>
+      <ion-card-title>Товары в закупке ({{ formData.items.length }})</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let item of formData.items; let i = index">
+          <ion-label>
+            <h3>{{ item.product_name }}</h3>
+            <p>{{ item.quantity }} шт. × {{ item.buy_price | number:'1.2-2' }} = {{ item.total_cost | number:'1.2-2' }}
+              сом.</p>
+            <p>Цена продажи: {{ item.sell_price | number:'1.2-2' }} сом.</p>
+            <p *ngIf="item.is_return" class="return-label">
+              <ion-badge color="warning">Возврат</ion-badge>
+            </p>
+          </ion-label>
+          @if (!purchase?.id) {
+            <ion-button fill="clear" color="danger" slot="end" (click)="removeItem(i)">
+              <ion-icon name="trash" slot="icon-only"></ion-icon>
+            </ion-button>
+          }
+        </ion-item>
+      </ion-list>
+
+      <ion-item>
+        <ion-label>
+          <h2>Итого</h2>
+          <p><strong>{{ formData.total_amount | number:'1.2-2' }} сом.</strong></p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Статус и заметки -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Комментарий</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-textarea
+          label="Заметки"
+          labelPlacement="stacked"
+          [(ngModel)]="formData.notes"
+          placeholder="Дополнительная информация"
+          rows="3">
+        </ion-textarea>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
