@@ -15,12 +15,6 @@ import {
   AnalyticsFilters
 } from './analytics-filter-modal/analytics-filter-modal.component';
 
-interface TopSellingProduct {
-  name: string;
-  totalSold: number;
-  revenue: number;
-}
-
 @Component({
   selector: 'app-analytics',
   templateUrl: './analytics.page.html',

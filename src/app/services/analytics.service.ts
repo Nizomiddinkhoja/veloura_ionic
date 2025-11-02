@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { AnalyticsFilters } from "../components/analytics/analytics-filter-modal/analytics-filter-modal.component";
 
 export interface AnalyticsData {

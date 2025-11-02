@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, LoadingController, ModalController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
 import { ToastService } from "../../services/toast.service";
