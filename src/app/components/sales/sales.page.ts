@@ -226,7 +226,7 @@ export class SalesPage implements OnInit {
     details += '<b>Товары:</b>\n';
 
     sale.items.forEach((item, index) => {
-      details += `${index + 1}. ${item.name}\n`;
+      details += `${index + 1}. ${item?.product?.name}\n`;
       details += `&nbsp;&nbsp;&nbsp; Количество: ${item.quantity} шт.\n`;
       details += `&nbsp;&nbsp;&nbsp; Цена: ${item.sell_price.toFixed(2)} c.\n`;
       details += `&nbsp;&nbsp;&nbsp; Сумма: ${(item.quantity * item.sell_price).toFixed(2)} c.\n\n`;
@@ -239,7 +239,7 @@ export class SalesPage implements OnInit {
       details += '\n\n <b>Возвращенные товары:</b>\n';
       sale.returns?.forEach((item, index) => {
         const summa = (item.quantity * item.refund_amount).toFixed(2);
-        details += `${index + 1}. ${item.product_name}\n`;
+        details += `${index + 1}. ${item?.product?.name}\n`;
         details += `&nbsp;&nbsp;&nbsp; Количество: ${item.quantity} шт.\n`;
         details += `&nbsp;&nbsp;&nbsp; Цена: ${item.refund_amount.toFixed(2)} c.\n`;
         details += `&nbsp;&nbsp;&nbsp; Сумма: ${summa} c.\n`;

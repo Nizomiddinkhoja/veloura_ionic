@@ -19,7 +19,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-refresher slot="fixed" (ionRefresh)="refreshProducts($event)">
+  <ion-refresher slot="fixed" (ionRefresh)="onIonRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
@@ -35,7 +35,7 @@
         <ion-item>
           <ion-label>
             <h2>{{ product.name }}</h2>
-            <p>Цена покупки: {{ product.buy_price | number:'1.2-2' }} сом.</p>
+            <p>Цена покупки: {{ product?.buy_price | number:'1.2-2' }} сом.</p>
             <p>Цена продажи: {{ product.sell_price | number:'1.2-2' }} сом.</p>
             <p>Остаток: {{ product.quantity }} шт.</p>
             <p *ngIf="product.created_at">Создан: {{ product.created_at | date:'dd.MM.yyyy' }}</p>

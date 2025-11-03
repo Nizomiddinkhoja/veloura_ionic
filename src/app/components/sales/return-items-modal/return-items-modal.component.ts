@@ -30,7 +30,7 @@ export class ReturnItemsModalComponent implements OnInit {
   ngOnInit() {
     this.lines = (this.sale.items || []).map((i: SaleItem) => ({
       product_id: i.product_id,
-      name: i.name,
+      name: i?.product?.name,
       max: i.quantity,
       qty: 0,
       selected: false,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { AlertController, LoadingController } from "@ionic/angular";
 import { Note } from "../../models/note.model";
 import { NoteService } from "../../services/note.service";
@@ -9,6 +9,8 @@ import { ModalController } from '@ionic/angular';
 import { NotesFilterModalComponent, NotesFilters } from './notes-filter-modal/notes-filter-modal.component';
 import { UserRole } from "../../models/user-role";
 import { AuthService } from "../../services/auth.service";
+import { finalize } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-notes',
@@ -21,6 +23,8 @@ export class NotesPage implements OnInit {
   filteredNotes: Note[] = [];
   searchTerm: string = '';
   currentFilters: NotesFilters = {};
+  isLoading = true
+  private refreshEvent: any
 
   constructor(
     private noteService: NoteService,
@@ -28,39 +32,44 @@ export class NotesPage implements OnInit {
     private loadingController: LoadingController,
     private toastService: ToastService,
     private authService: AuthService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private readonly destroyRef: DestroyRef,
   ) {
     addIcons({add, trash, create, filterOutline})
   }
 
   ngOnInit() {
-    this.loadNotes();
+    this.getNotes();
   }
 
   public get isAdmin() {
     return this.authService.hasRole(UserRole.Admin)
   }
 
-  async loadNotes() {
-    const loading = await this.loadingController.create({
-      message: 'Загрузка заметок...'
-    });
-    await loading.present();
-
-    try {
-      this.notes = await this.noteService.list(this.currentFilters).toPromise() || [];
-      this.filteredNotes = [...this.notes];
-    } catch (error) {
-      console.error('Ошибка загрузки заметок:', error);
-      this.toastService.error('Ошибка загрузки заметкаов');
-    } finally {
-      await loading.dismiss();
-    }
+  onIonRefresh(event: any) {
+    this.refreshEvent = event
+    this.getNotes()
   }
 
-  async refreshNotes(event: any) {
-    await this.loadNotes();
-    event.target.complete();
+  private getNotes() {
+    this.noteService.list(this.currentFilters)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false
+          if (this.refreshEvent) {
+            this.refreshEvent.target.complete()
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
+      next: notes => {
+        this.notes = notes;
+        this.filteredNotes = [...this.notes];
+      },
+      error: () => {
+        alert('Неверные учетные данные');
+      }
+    });
   }
 
   filterNotes() {
@@ -101,37 +110,33 @@ export class NotesPage implements OnInit {
               return false;
             }
 
-            await this.saveNote(data.text, note?.id);
-            return true;
+            const loading = await this.loadingController.create({
+              message: note?.id ? 'Сохранение изменений...' : 'Создание заметки...'
+            });
+            await loading.present();
+
+            try {
+              const noteData: Note = {text: data.text};
+              if (note?.id) {
+                await this.noteService.update(note?.id, noteData).toPromise();
+              } else {
+                await this.noteService.create(noteData).toPromise();
+              }
+              this.toastService.success('Заметка успешно сохранена');
+              this.getNotes();
+              return true;
+            } catch (error) {
+              console.error('Ошибка сохранения заметки:', error);
+              return false;
+            } finally {
+              await loading.dismiss();
+            }
           }
         }
       ]
     });
 
     await alert.present();
-  }
-
-  private async saveNote(text: string, id?: number) {
-    const loading = await this.loadingController.create({
-      message: id ? 'Сохранение изменений...' : 'Создание заметки...'
-    });
-    await loading.present();
-
-    try {
-      const note: Note = {text};
-      if (id) {
-        await this.noteService.update(id, note).toPromise();
-      } else {
-        await this.noteService.create(note).toPromise();
-      }
-      this.toastService.success('Заметка успешно сохранена');
-      await this.loadNotes();
-    } catch (error) {
-      console.error('Ошибка сохранения заметки:', error);
-      this.toastService.error('Ошибка сохранения заметки');
-    } finally {
-      await loading.dismiss();
-    }
   }
 
   async deleteNote(note: Note) {
@@ -146,32 +151,29 @@ export class NotesPage implements OnInit {
         {
           text: 'Удалить',
           role: 'destructive',
-          handler: () => {
-            this.removeNote(note.id!);
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Удаление заметки...'
+            });
+            await loading.present();
+
+            try {
+              await this.noteService.remove(note.id!).toPromise();
+              this.toastService.success('Заметка успешно удален');
+              this.getNotes();
+              return true;
+            } catch (error) {
+              console.error('Ошибка удаления заметки:', error);
+              return false;
+            } finally {
+              await loading.dismiss();
+            }
           }
         }
       ]
     });
 
     await alert.present();
-  }
-
-  async removeNote(id: number) {
-    const loading = await this.loadingController.create({
-      message: 'Удаление заметки...'
-    });
-    await loading.present();
-
-    try {
-      await this.noteService.remove(id).toPromise();
-      this.toastService.success('Заметка успешно удален');
-      await this.loadNotes();
-    } catch (error) {
-      console.error('Ошибка удаления заметки:', error);
-      this.toastService.error('Ошибка удаления заметки');
-    } finally {
-      await loading.dismiss();
-    }
   }
 
   // Открыть модалку фильтров
@@ -185,10 +187,10 @@ export class NotesPage implements OnInit {
 
     await modal.present();
 
-    const { data } = await modal.onWillDismiss<NotesFilters>();
+    const {data} = await modal.onWillDismiss<NotesFilters>();
     if (data) {
       this.currentFilters = data;
-      await this.loadNotes();
+      this.getNotes();
     }
   }
 }

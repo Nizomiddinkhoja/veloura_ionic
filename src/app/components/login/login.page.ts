@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { StorageService } from "../../services/storage.service";
+import { finalize } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -20,6 +22,7 @@ export class LoginPage {
     private auth: AuthService,
     private router: Router,
     private storageService: StorageService,
+    private readonly destroyRef: DestroyRef,
     ) {
   }
 
@@ -30,9 +33,12 @@ export class LoginPage {
       return;
     }
     this.loading = true;
-    this.auth.login(this.email, this.password).subscribe({
+    this.auth.login(this.email, this.password)
+      .pipe(
+        finalize(() => this.loading = false),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
       next: (res) => {
-        this.loading = false;
         if (res?.token) {
           this.storageService.setItem('auth-token', res.token);
           this.router.navigateByUrl('/home');
@@ -41,7 +47,6 @@ export class LoginPage {
         }
       },
       error: () => {
-        this.loading = false;
         alert('Неверные учетные данные');
       }
     });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
@@ -7,6 +7,8 @@ import { addIcons } from "ionicons";
 import { add, create, trash, filterOutline } from "ionicons/icons";
 import { ProductModalComponent } from './product-modal/product-modal.component';
 import { ProductsFilterModalComponent, ProductsFilters } from './products-filter-modal/products-filter-modal.component';
+import { finalize } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-products',
@@ -19,6 +21,8 @@ export class ProductsPage implements OnInit {
   filteredProducts: Product[] = [];
   searchTerm: string = '';
   currentFilters: ProductsFilters = {};
+  isLoading = true
+  private refreshEvent: any
 
   constructor(
     private productService: ProductService,
@@ -26,6 +30,7 @@ export class ProductsPage implements OnInit {
     private loadingController: LoadingController,
     private toastService: ToastService,
     private modalController: ModalController,
+    private readonly destroyRef: DestroyRef,
   ) {
     addIcons({add, trash, create, filterOutline})
   }
@@ -34,26 +39,31 @@ export class ProductsPage implements OnInit {
     this.loadProducts();
   }
 
-  async loadProducts() {
-    const loading = await this.loadingController.create({
-      message: 'Загрузка продуктов...'
+  private loadProducts() {
+    this.productService.list(this.currentFilters)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false
+          if (this.refreshEvent) {
+            this.refreshEvent.target.complete()
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
+      next: products => {
+        this.products = products;
+        this.filteredProducts = [...this.products];
+      },
+      error: (error) => {
+        console.error('Ошибка загрузки продуктов:', error);
+        this.toastService.error('Ошибка загрузки продуктов');
+      }
     });
-    await loading.present();
-
-    try {
-      this.products = await this.productService.list(this.currentFilters).toPromise() || [];
-      this.filteredProducts = [...this.products];
-    } catch (error) {
-      console.error('Ошибка загрузки продуктов:', error);
-      this.toastService.error('Ошибка загрузки продуктов');
-    } finally {
-      await loading.dismiss();
-    }
   }
 
-  async refreshProducts(event: any) {
-    await this.loadProducts();
-    event.target.complete();
+  onIonRefresh(event: any) {
+    this.refreshEvent = event
+    this.loadProducts()
   }
 
   filterProducts() {
@@ -75,19 +85,7 @@ export class ProductsPage implements OnInit {
     });
 
     await modal.present();
-
-    const {data} = await modal.onWillDismiss<Product>();
-    if (data) {
-      if (data.name && data.buy_price && data.sell_price && data.quantity) {
-        if (product) {
-          this.updateProduct(product.id!, data);
-        } else {
-          this.createProduct(data);
-        }
-      } else {
-        this.toastService.warning('Заполните все поля');
-      }
-    }
+    await modal.onDidDismiss();
   }
 
   async deleteProduct(product: Product) {
@@ -102,84 +100,29 @@ export class ProductsPage implements OnInit {
         {
           text: 'Удалить',
           role: 'destructive',
-          handler: () => {
-            this.removeProduct(product.id!);
+          handler: async () => {
+            const loading = await this.loadingController.create({
+              message: 'Удаление продукта...'
+            });
+            await loading.present();
+
+            try {
+              await this.productService.remove(product.id!).toPromise();
+              this.toastService.success('Продукт успешно удален');
+              this.loadProducts();
+              return true;
+            } catch (error) {
+              console.error('Ошибка удаления продукта:', error);
+              return false;
+            } finally {
+              await loading.dismiss();
+            }
           }
         }
       ]
     });
 
     await alert.present();
-  }
-
-  async createProduct(data: any) {
-    const loading = await this.loadingController.create({
-      message: 'Создание продукта...'
-    });
-    await loading.present();
-
-    try {
-      const newProduct: Product = {
-        name: data.name,
-        buy_price: parseFloat(data.buy_price),
-        sell_price: parseFloat(data.sell_price),
-        quantity: parseInt(data.quantity),
-        created_at: new Date().toISOString(),
-        added_at: [new Date().toISOString()]
-      };
-
-      await this.productService.create(newProduct).toPromise();
-      this.toastService.success('Продукт успешно добавлен');
-      await this.loadProducts();
-    } catch (error) {
-      console.error('Ошибка создания продукта:', error);
-      this.toastService.error('Ошибка создания продукта');
-    } finally {
-      await loading.dismiss();
-    }
-  }
-
-  async updateProduct(id: number, data: any) {
-    const loading = await this.loadingController.create({
-      message: 'Обновление продукта...'
-    });
-    await loading.present();
-
-    try {
-      const updatedProduct: Partial<Product> = {
-        name: data.name,
-        buy_price: parseFloat(data.buy_price),
-        sell_price: parseFloat(data.sell_price),
-        quantity: parseInt(data.quantity)
-      };
-
-      await this.productService.update(id, updatedProduct).toPromise();
-      this.toastService.success('Продукт успешно обновлен');
-      await this.loadProducts();
-    } catch (error) {
-      console.error('Ошибка обновления продукта:', error);
-      this.toastService.error('Ошибка обновления продукта');
-    } finally {
-      await loading.dismiss();
-    }
-  }
-
-  async removeProduct(id: number) {
-    const loading = await this.loadingController.create({
-      message: 'Удаление продукта...'
-    });
-    await loading.present();
-
-    try {
-      await this.productService.remove(id).toPromise();
-      this.toastService.success('Продукт успешно удален');
-      await this.loadProducts();
-    } catch (error) {
-      console.error('Ошибка удаления продукта:', error);
-      this.toastService.error('Ошибка удаления продукта');
-    } finally {
-      await loading.dismiss();
-    }
   }
 
   // Открыть модалку фильтров
@@ -193,7 +136,7 @@ export class ProductsPage implements OnInit {
 
     await modal.present();
 
-    const { data } = await modal.onWillDismiss<ProductsFilters>();
+    const {data} = await modal.onWillDismiss<ProductsFilters>();
     if (data) {
       this.currentFilters = data;
       await this.loadProducts();

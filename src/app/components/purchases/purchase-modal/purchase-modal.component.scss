@@ -9,7 +9,7 @@ ion-item {
 ion-label {
   p {
     margin-top: 8px;
-    
+
     strong {
       color: var(--ion-color-primary);
     }
@@ -27,7 +27,7 @@ ion-label {
     z-index: 1000;
     max-height: 200px;
     overflow-y: auto;
-    background: var(--ion-background-color);
+    background: var(--background);
     border: 1px solid var(--ion-color-light-shade);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

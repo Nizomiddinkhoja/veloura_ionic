@@ -1,16 +1,19 @@
+import { Product } from "./product.model";
+
 export interface SaleItem {
   product_id: number;
   name?: string;
   quantity: number;
   sell_price: number; // цена продажи для этой позиции
   buy_price: number; // цена продажи для этой позиции
+  product?: Product
 }
 
 export interface SaleReturnItem {
   id: number;
   sale_id: number;
   product_id: number;
-  product_name: string;
+  product?: Product
   quantity: number;
   sell_price: number;
   buy_price: number;

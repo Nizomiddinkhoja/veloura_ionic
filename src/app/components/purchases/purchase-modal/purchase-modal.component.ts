@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { Purchase, PurchaseItem, Dealer } from '../../../models/purchase.model';
 import { Product } from '../../../models/product.model';
 import { PurchaseService } from '../../../services/purchase.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { ToastService } from "../../../services/toast.service";
 
 @Component({
   selector: 'app-purchase-modal',
@@ -49,7 +50,9 @@ export class PurchaseModalComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private purchaseService: PurchaseService
+    private purchaseService: PurchaseService,
+    private loadingController: LoadingController,
+    private toastService: ToastService,
   ) {
   }
 
@@ -193,7 +196,7 @@ export class PurchaseModalComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  save() {
+  async save() {
     if (this.formData.items.length === 0) {
       return;
     }
@@ -207,6 +210,66 @@ export class PurchaseModalComponent implements OnInit {
       notes: this.formData.notes
     };
 
-    this.modalController.dismiss(purchase);
+
+    if (this.purchase) {
+      await this.updatePurchase(this.purchase.id!, purchase);
+    } else {
+      await this.createPurchase(purchase);
+    }
+    // const {data} = await modal.onWillDismiss<Purchase>();
+    // if (data) {
+    //   if (purchase) {
+    //     await this.updatePurchase(purchase.id!, data);
+    //   } else {
+    //     await this.createPurchase(data);
+    //   }
+    // }
+    //
+    //
+    //   if (this.currentProduct) {
+    //     if (this.currentProduct.name && this.currentProduct.sell_price) {
+    //       if (this.isUpdate) {
+    //         await this.updateProduct(this.product.id!, this.currentProduct);
+    //       } else {
+    //         await this.createProduct(this.currentProduct);
+    //       }
+    //     } else {
+    //       this.toastService.warning('Заполните все поля');
+    //     }
+    //   }
+  }
+
+  async createPurchase(data: Purchase) {
+    const loading = await this.loadingController.create({
+      message: 'Создание закупки...'
+    });
+    await loading.present();
+
+    try {
+      await this.purchaseService.createPurchase(data).toPromise();
+      this.toastService.success('Закупка успешно создана');
+      await this.modalController.dismiss();
+    } catch (error) {
+      console.error('Ошибка создания закупки:', error);
+    } finally {
+      await loading.dismiss();
+    }
+  }
+
+  async updatePurchase(id: number, data: Purchase) {
+    const loading = await this.loadingController.create({
+      message: 'Обновление закупки...'
+    });
+    await loading.present();
+
+    try {
+      await this.purchaseService.updatePurchase(id, data).toPromise();
+      this.toastService.success('Закупка успешно обновлена');
+      await this.modalController.dismiss();
+    } catch (error) {
+      console.error('Ошибка обновления закупки:', error);
+    } finally {
+      await loading.dismiss();
+    }
   }
 }

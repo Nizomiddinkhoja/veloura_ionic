@@ -21,16 +21,6 @@
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Цена покупки</ion-label>
-      <ion-input
-        type="number"
-        [(ngModel)]="currentProduct.buy_price"
-        placeholder="0.00"
-        required>
-      </ion-input>
-    </ion-item>
-
-    <ion-item>
       <ion-label position="stacked">Цена продажи</ion-label>
       <ion-input
         type="number"
@@ -40,16 +30,7 @@
       </ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Количество</ion-label>
-      <ion-input
-        type="number"
-        disabled
-        [(ngModel)]="currentProduct.quantity"
-        placeholder="0"
-        required>
-      </ion-input>
-    </ion-item>
+<!--    TODO вывести список закупок этого продукта если есть в наличии (purchase_items.remaining_quantity)-->
 
   </ion-list>
 </ion-content>

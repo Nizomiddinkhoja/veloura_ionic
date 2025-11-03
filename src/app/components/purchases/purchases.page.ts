@@ -85,53 +85,11 @@ export class PurchasesPage implements OnInit {
         purchase
       }
     });
-
     await modal.present();
 
-    const {data} = await modal.onWillDismiss<Purchase>();
-    if (data) {
-      if (purchase) {
-        await this.updatePurchase(purchase.id!, data);
-      } else {
-        await this.createPurchase(data);
-      }
-    }
-  }
-
-  async createPurchase(data: Purchase) {
-    const loading = await this.loadingController.create({
-      message: 'Создание закупки...'
+    modal.onDidDismiss().then(() => {
+      this.loadData();
     });
-    await loading.present();
-
-    try {
-      await this.purchaseService.createPurchase(data).toPromise();
-      this.toastService.success('Закупка успешно создана');
-      await this.loadData();
-    } catch (error) {
-      console.error('Ошибка создания закупки:', error);
-      this.toastService.error('Ошибка создания закупки');
-    } finally {
-      await loading.dismiss();
-    }
-  }
-
-  async updatePurchase(id: number, data: Purchase) {
-    const loading = await this.loadingController.create({
-      message: 'Обновление закупки...'
-    });
-    await loading.present();
-
-    try {
-      await this.purchaseService.updatePurchase(id, data).toPromise();
-      this.toastService.success('Закупка успешно обновлена');
-      await this.loadData();
-    } catch (error) {
-      console.error('Ошибка обновления закупки:', error);
-      this.toastService.error('Ошибка обновления закупки');
-    } finally {
-      await loading.dismiss();
-    }
   }
 
   async deletePurchase(purchase: Purchase) {

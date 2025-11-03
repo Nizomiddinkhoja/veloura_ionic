@@ -143,11 +143,10 @@ export class SaleModalComponent implements OnInit {
       await this.saleService.create(sale).toPromise();
       this.toastService.success('Продажа успешно оформлена');
       this.dismiss(true);
-    } catch (error) {
-      console.error('Ошибка создания продажи:', error);
-      this.toastService.error('Ошибка создания продажи');
-    } finally {
       await loading.dismiss();
+    } catch (error) {
+      await loading.dismiss();
+      console.error('Ошибка создания продажи:', error);
     }
   }
 
