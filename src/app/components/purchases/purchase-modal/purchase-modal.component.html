@@ -12,31 +12,31 @@
 
 <ion-content class="ion-padding">
   <!-- Информация о дилере -->
-<!--  <ion-card>-->
-<!--    <ion-card-header>-->
-<!--      <ion-card-title>Дилер</ion-card-title>-->
-<!--    </ion-card-header>-->
-<!--    <ion-card-content>-->
-<!--      <div class="autocomplete-wrapper">-->
-<!--        <ion-item>-->
-<!--          <ion-input-->
-<!--            label="Имя дилера"-->
-<!--            labelPlacement="stacked"-->
-<!--            [(ngModel)]="dealerSearchTerm"-->
-<!--            (ionInput)="onDealerInput($event)"-->
-<!--            placeholder="Начните вводить имя дилера"-->
-<!--            required>-->
-<!--          </ion-input>-->
-<!--        </ion-item>-->
-<!--        <ion-list *ngIf="showDealerSuggestions" class="suggestions-list">-->
-<!--          <ion-item button *ngFor="let dealer of dealerSuggestions" (click)="selectDealer(dealer)">-->
-<!--            <ion-label>{{ dealer.name }}</ion-label>-->
-<!--          </ion-item>-->
-<!--        </ion-list>-->
-<!--      </div>-->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Дилер</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="autocomplete-wrapper">
+        <ion-item>
+          <ion-input
+            label="Имя дилера"
+            labelPlacement="stacked"
+            [(ngModel)]="dealerSearchTerm"
+            (ionInput)="onDealerInput($event)"
+            placeholder="Начните вводить имя дилера"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-list *ngIf="showDealerSuggestions" class="suggestions-list">
+          <ion-item button *ngFor="let dealer of dealerSuggestions" (click)="selectDealer(dealer)">
+            <ion-label>{{ dealer.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
 
-<!--    </ion-card-content>-->
-<!--  </ion-card>-->
+    </ion-card-content>
+  </ion-card>
 
   <!-- Добавление товаров -->
   <ion-card>
