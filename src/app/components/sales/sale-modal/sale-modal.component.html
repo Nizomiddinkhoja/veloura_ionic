@@ -41,18 +41,27 @@
         <ion-card-title>Выберите товары</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item>
-          <ion-select
-            [(ngModel)]="selectedProductId"
-            placeholder="Выберите товар"
-            (ionChange)="onProductSelected()">
-            <ion-select-option
-              *ngFor="let product of availableProducts"
-              [value]="product.id">
-              {{ product.name }} ({{ product.quantity }} шт.)
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
+        <div class="autocomplete-wrapper">
+          <ion-item>
+            <ion-input
+              label="Название товара"
+              labelPlacement="stacked"
+              [(ngModel)]="productSearchTerm"
+              (ionInput)="onProductInput($event)"
+              (ionFocus)="onProductInput(null)"
+              placeholder="Начните вводить название товара"
+              required>
+            </ion-input>
+          </ion-item>
+          <ion-list *ngIf="showProductSuggestions" class="suggestions-list">
+            <ion-item button *ngFor="let product of productSuggestions" (click)="onProductSelected(product)">
+              <ion-label>
+                <h3>{{ product.name }} ({{ product.quantity }} шт.)</h3>
+                <p>Цена покупки: {{ product.buy_price | number:'1.2-2' }} сом.</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
 
         <ion-item *ngIf="selectedProduct">
           <ion-label position="stacked">Количество</ion-label>

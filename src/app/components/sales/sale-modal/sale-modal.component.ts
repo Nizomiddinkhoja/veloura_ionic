@@ -7,6 +7,8 @@ import { Sale, SaleItem } from 'src/app/models/sale.model';
 import { ProductService } from 'src/app/services/product.service';
 import { SaleService } from 'src/app/services/sale.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-sale-modal',
@@ -24,7 +26,11 @@ export class SaleModalComponent implements OnInit {
   customerName: string = '';
   comment: string = '';
   cartItems: SaleItem[] = [];
-  paid: boolean = false; // статус оплаты
+  paid: boolean = false;
+  productSearchTerm: string = '';
+  productSuggestions: Product[] = [];
+  showProductSuggestions: boolean = false;
+  private productSearch$ = new Subject<string>();
 
   constructor(
     private modalController: ModalController,
@@ -38,6 +44,15 @@ export class SaleModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+
+    this.productSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(term => this.productService.list({search: term, min_quantity: 1}))
+    ).subscribe(products => {
+      this.productSuggestions = products;
+      this.showProductSuggestions = products.length > 0;
+    });
   }
 
   async loadProducts() {
@@ -47,19 +62,6 @@ export class SaleModalComponent implements OnInit {
     } catch (error) {
       console.error('Ошибка загрузки продуктов:', error);
       this.toastService.error('Ошибка загрузки продуктов');
-    }
-  }
-
-  onProductSelected() {
-    if (this.selectedProductId) {
-      this.selectedProduct = this.availableProducts.find(p => p.id === this.selectedProductId) || null;
-      if (this.selectedProduct) {
-        this.sellPrice = this.selectedProduct.sell_price;
-        this.buyPrice = this.selectedProduct.buy_price;
-        this.quantity = 1;
-      }
-    } else {
-      this.selectedProduct = null;
     }
   }
 
@@ -153,4 +155,41 @@ export class SaleModalComponent implements OnInit {
   dismiss(created: boolean = false) {
     this.modalController.dismiss(created);
   }
+
+  onProductInput(event: any) {
+    const value = event?.target?.value || '';
+    console.warn(value)
+    this.productSearchTerm = value;
+    this.selectedProductId = null;
+    this.productSearch$.next(value);
+  }
+
+  onProductSelected(product: Product) {
+    if (product.id) {
+      this.selectedProductId = product.id;
+      this.selectedProduct = this.availableProducts.find(p => p.id === this.selectedProductId) || null;
+      if (this.selectedProduct) {
+        if (this.selectedProduct?.purchase_items?.length) {
+          this.buyPrice = Math.min(
+            ...this.selectedProduct.purchase_items
+              .map(i => {
+                if (Number(i.quantity) > 0) {
+                  return Number(i.buy_price);
+                }
+                return 0
+              })
+          );
+        } else {
+          this.buyPrice = this.selectedProduct.buy_price;
+        }
+        this.sellPrice = this.selectedProduct.sell_price;
+        this.quantity = 1;
+      }
+      this.productSearchTerm = product.name;
+    } else {
+      this.selectedProduct = null;
+    }
+    this.showProductSuggestions = false;
+  }
+
 }

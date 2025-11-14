@@ -35,9 +35,18 @@
         <ion-item>
           <ion-label>
             <h2>{{ product.name }}</h2>
-            <p>Цена покупки: {{ product?.buy_price | number:'1.2-2' }} сом.</p>
             <p>Цена продажи: {{ product.sell_price | number:'1.2-2' }} сом.</p>
-            <p>Остаток: {{ product.quantity }} шт.</p>
+            <p>Общий остаток: {{ product.quantity }} шт.</p>
+            @if (product?.purchase_items?.length) {
+              <ul>
+                @for (item of product.purchase_items; track item) {
+                  <li>
+                    <p>Цена покупки: {{ item?.buy_price | number:'1.2-2' }} сом.</p>
+                    <p>Остаток: {{ item?.quantity }}</p>
+                  </li>
+                }
+              </ul>
+            }
             <p *ngIf="product.created_at">Создан: {{ product.created_at | date:'dd.MM.yyyy' }}</p>
           </ion-label>
           <ion-badge
