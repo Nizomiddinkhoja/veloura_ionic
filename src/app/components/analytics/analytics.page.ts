@@ -1,12 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ModalController } from '@ionic/angular';
-import { ProductService } from '../../services/product.service';
-import { SaleService } from '../../services/sale.service';
-import { PurchaseService } from '../../services/purchase.service';
 import { AnalyticsService, AnalyticsData } from '../../services/analytics.service';
-import { Product } from '../../models/product.model';
-import { Sale } from '../../models/sale.model';
-import { Purchase } from '../../models/purchase.model';
 import { ToastService } from "../../services/toast.service";
 import { addIcons } from "ionicons";
 import { refresh, filterOutline } from "ionicons/icons";
@@ -22,26 +16,8 @@ import {
   standalone: false,
 })
 export class AnalyticsPage implements OnInit {
-  products: Product[] = [];
-  sales: Sale[] = [];
-  filteredSales: Sale[] = [];
-  purchases: Purchase[] = [];
-  filteredPurchases: Purchase[] = [];
-
   // Текущие активные фильтры
-  currentFilters: AnalyticsFilters = {
-    date_from: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
-    date_to: new Date().toISOString().split('T')[0],
-  };
-
-  // Геттеры для совместимости с существующим кодом
-  get dateFrom(): string {
-    return this.currentFilters.date_from || '';
-  }
-
-  get dateTo(): string {
-    return this.currentFilters.date_to || '';
-  }
+  currentFilters: AnalyticsFilters = {};
 
   // Статистика
   analyticsData: AnalyticsData = {
@@ -62,9 +38,6 @@ export class AnalyticsPage implements OnInit {
   };
 
   constructor(
-    private productService: ProductService,
-    private saleService: SaleService,
-    private purchaseService: PurchaseService,
     private analyticsService: AnalyticsService,
     private loadingController: LoadingController,
     private modalController: ModalController,
