@@ -7,7 +7,7 @@ import { Sale, SaleItem } from 'src/app/models/sale.model';
 import { ProductService } from 'src/app/services/product.service';
 import { SaleService } from 'src/app/services/sale.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { debounceTime, switchMap } from "rxjs/operators";
 import { Subject } from "rxjs";
 
 @Component({
@@ -47,7 +47,6 @@ export class SaleModalComponent implements OnInit {
 
     this.productSearch$.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
       switchMap(term => this.productService.list({search: term, min_quantity: 1}))
     ).subscribe(products => {
       this.productSuggestions = products;
@@ -95,6 +94,7 @@ export class SaleModalComponent implements OnInit {
     this.selectedProduct.quantity -= this.quantity;
 
     // Сбрасываем форму
+    this.productSearchTerm = '';
     this.selectedProductId = null;
     this.selectedProduct = null;
     this.quantity = 1;
@@ -158,7 +158,6 @@ export class SaleModalComponent implements OnInit {
 
   onProductInput(event: any) {
     const value = event?.target?.value || '';
-    console.warn(value)
     this.productSearchTerm = value;
     this.selectedProductId = null;
     this.productSearch$.next(value);
