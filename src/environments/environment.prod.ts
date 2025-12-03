@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://nizomiddin.site/api/v1',
+  apiUrl: 'https://shop.khoja.ru/api/v1',
 };
